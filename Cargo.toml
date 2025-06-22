@@ -1,0 +1,13 @@
+[package]
+name = "low_level_triangulator"
+version = "0.1.0"
+authors = ["lewisaronmilne <lewisaronmilne@gmail.com>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+wgpu = "0.3"
+wgpu-native = { version = "0.3", features = ["gfx-backend-vulkan"]}
+winit = "0.20, <0.20.0-alpha4"
+raw-window-handle = "0.1"
+rand = "0.7"
