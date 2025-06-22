@@ -1,4 +1,4 @@
-# Low Level Triangulator
+# Low Level Graphics Triangulator
 
 This is an implementation of the monotone polygon triangulation algorithm, programming entirely in Rust.
 
