@@ -1,0 +1,12 @@
+[package]
+name = "graphics_test"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+env_logger = "0.10"
+winit = "0.30"
+wgpu = "25.0"
+pollster = "0.4"
+log = "0.4"
+bytemuck = "1.23"# { version = "1.23", features = [ "derive" ] }
