@@ -24,7 +24,7 @@ impl XY
     pub fn init() -> XY { XY::new(0.0, 0.0) }
 }
 
-const CLEAR_COLOUR: wgpu::Color = wgpu::Color { r: 0.2, g: 0.4, b: 0.2, a: 1.0 };
+const CLEAR_COLOUR: wgpu::Color = wgpu::Color { r: 0.1, g: 0.1, b: 0.2, a: 1.0 };
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
@@ -312,7 +312,7 @@ impl ApplicationHandler for App
 {
     fn resumed(&mut self, event_loop: &ActiveEventLoop)
     {
-        let window_attr = Window::default_attributes();
+        let window_attr = Window::default_attributes().with_title("Low Level Graphics Triangulator!");
         let new_window = Arc::new(event_loop.create_window(window_attr).unwrap());
         self.state = Some(pollster::block_on(State::new(new_window)))
     }

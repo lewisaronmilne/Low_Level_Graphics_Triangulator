@@ -9,3 +9,6 @@ The algorithm breaks down polygon into monotone sections. Each section consists 
 These monotones are much easier to break down into triangles which can easily be rendered by the graphics library.
 
 In the future I'd like it to break down more complex polygons like ones with holes, and for it to be able to fix self-intersection.
+
+![Screenshot 1](screenshots/screenshot1.png)
+![Screenshot 2](screenshots/screenshot2.png)

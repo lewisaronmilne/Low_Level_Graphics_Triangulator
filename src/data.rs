@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::triangulator;
 use crate::XY;
 use crate::Vertex;
@@ -762,6 +764,7 @@ pub fn make_shapes() -> Vec<Vec<Vertex>>
     );
 
     let mut shapes = vec!();
+    let mut rng = rand::rng();
 
     for path in paths 
     {
@@ -769,9 +772,11 @@ pub fn make_shapes() -> Vec<Vec<Vertex>>
         let mut path_verts = Vec::with_capacity(path_xys.len()*3);
         for xy in path_xys
         {
-            path_verts.push(Vertex { position: [xy.0.x, xy.0.y, 0.0], color: [0.5, 0.0, 0.5] });
-            path_verts.push(Vertex { position: [xy.1.x, xy.1.y, 0.0], color: [0.5, 0.0, 0.5] });
-            path_verts.push(Vertex { position: [xy.2.x, xy.2.y, 0.0], color: [0.5, 0.0, 0.5] });
+            let rand_col = [rng.random::<f32>(), rng.random::<f32>(), rng.random::<f32>()];
+            
+            path_verts.push(Vertex { position: [xy.0.x, xy.0.y, 0.0], color: rand_col });
+            path_verts.push(Vertex { position: [xy.1.x, xy.1.y, 0.0], color: rand_col });
+            path_verts.push(Vertex { position: [xy.2.x, xy.2.y, 0.0], color: rand_col });
         }
         shapes.push(path_verts);
     };
