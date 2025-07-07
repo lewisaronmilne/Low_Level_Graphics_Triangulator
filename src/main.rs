@@ -6,33 +6,26 @@ use winit::window::{Window, WindowId};
 
 use wgpu::util::DeviceExt;
 
+use std::panic::PanicHookInfo;
 use std::sync::Arc;
 
 mod triangulator;
+mod data;
+
+#[derive(Debug, Copy, Clone)]
+pub struct XY 
+{ 
+    pub x: f32, 
+    pub y: f32 
+}
+
+impl XY 
+{
+    pub fn new(x: f32, y: f32) -> XY { XY {x, y} }
+    pub fn init() -> XY { XY::new(0.0, 0.0) }
+}
 
 const CLEAR_COLOUR: wgpu::Color = wgpu::Color { r: 0.2, g: 0.4, b: 0.2, a: 1.0 };
-
-const VERTICES: &[Vertex] = 
-&[
-    Vertex { position: [-0.5, 0.5, 0.0], color: [0.5, 0.0, 0.5] },
-    Vertex { position: [0.0, -0.5, 0.0], color: [0.5, 0.0, 0.5] },
-    Vertex { position: [0.5, 0.5, 0.0], color: [0.5, 0.0, 0.5] },
-];
-
-const VERTICES2: &[Vertex] = 
-&[
-    Vertex { position: [-0.0868241, 0.49240386, 0.0], color: [0.5, 0.0, 0.5] }, // A
-    Vertex { position: [-0.49513406, 0.06958647, 0.0], color: [0.5, 0.0, 0.5] }, // B
-    Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-
-    Vertex { position: [-0.49513406, 0.06958647, 0.0], color: [0.5, 0.0, 0.5] }, // B
-    Vertex { position: [-0.21918549, -0.44939706, 0.0], color: [0.5, 0.0, 0.5] }, // C
-    Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-
-    Vertex { position: [-0.21918549, -0.44939706, 0.0], color: [0.5, 0.0, 0.5] }, // C
-    Vertex { position: [0.35966998, -0.3473291, 0.0], color: [0.5, 0.0, 0.5] }, // D
-    Vertex { position: [0.44147372, 0.2347359, 0.0], color: [0.5, 0.0, 0.5] }, // E
-];
 
 #[repr(C)]
 #[derive(Copy, Clone, Debug, bytemuck::Pod, bytemuck::Zeroable)]
@@ -80,6 +73,8 @@ struct State
     vertex_buffer: wgpu::Buffer,
     num_vertices: u32,
     window: Arc<Window>,
+    shapes_list: Vec<Vec<Vertex>>,
+    shape_num: u32,
 }
 
 impl State 
@@ -195,15 +190,18 @@ impl State
             cache: None,
         };
         let render_pipeline = device.create_render_pipeline(pipeline_descriptor);
+        
+        let shapes_list = data::make_shapes();
+        let shape_num = 0;
 
         let vertex_buffer_init_descriptor = wgpu::util::BufferInitDescriptor 
         {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(VERTICES),
+            contents: bytemuck::cast_slice(&shapes_list[0]),
             usage: wgpu::BufferUsages::VERTEX,
         };
         let vertex_buffer = device.create_buffer_init(&vertex_buffer_init_descriptor);
-        let num_vertices = VERTICES.len() as u32;
+        let num_vertices = shapes_list[0].len() as u32;
 
         Self
         {
@@ -216,6 +214,8 @@ impl State
             vertex_buffer,
             num_vertices,
             window,
+            shapes_list, 
+            shape_num
         }
     }
 
@@ -229,32 +229,20 @@ impl State
         self.is_surface_configured = true;
     }
 
-    fn change_vertices(&mut self, in_verts: &[Vertex])
+    fn change_vertices(&mut self)
     {
-        use triangulator::XY;
+        self.shape_num = (self.shape_num + 1) % self.shapes_list.len() as u32;
 
-        let path = vec!(XY::new(-0.6,-0.2), XY::new(-0.4,-0.2), XY::new(-0.2,-0.2), XY::new( 0.0,-0.2), XY::new( 0.2,-0.2),
-            XY::new( 0.4,-0.2), XY::new( 0.6,-0.2), XY::new( 0.7, 0.2), XY::new( 0.5, 0.2), XY::new( 0.3, 0.2),
-            XY::new( 0.1, 0.2), XY::new(-0.1, 0.2), XY::new(-0.3, 0.2), XY::new(-0.5, 0.2), XY::new(-0.7, 0.2));
-
-        let path_xys = triangulator::calc(&path);
-        let num_verts = path_xys.len()*3;
-        let mut path_verts = Vec::with_capacity(path_xys.len()*3);
-        for xy in path_xys
-        {
-            path_verts.push(Vertex { position: [xy.0.x, xy.0.y, 0.0], color: [0.5, 0.0, 0.5] });
-            path_verts.push(Vertex { position: [xy.1.x, xy.1.y, 0.0], color: [0.5, 0.0, 0.5] });
-            path_verts.push(Vertex { position: [xy.2.x, xy.2.y, 0.0], color: [0.5, 0.0, 0.5] });
-        }
+        let verts = &self.shapes_list[self.shape_num as usize];
 
         let vertex_buffer_init_descriptor = wgpu::util::BufferInitDescriptor 
         {
             label: Some("Vertex Buffer"),
-            contents: bytemuck::cast_slice(&path_verts),
+            contents: bytemuck::cast_slice(&verts),
             usage: wgpu::BufferUsages::VERTEX,
         };
         self.vertex_buffer = self.device.create_buffer_init(&vertex_buffer_init_descriptor);
-        self.num_vertices = num_verts as u32;
+        self.num_vertices = verts.len() as u32;
     }
 
     fn render(&mut self) -> ()
@@ -302,7 +290,7 @@ impl State
         match (key_code, is_pressed)
         {
             (KeyCode::Escape, true) => event_loop.exit(),
-            (KeyCode::KeyS, true) => self.change_vertices(VERTICES2),
+            (KeyCode::Space, true) => self.change_vertices(),
             _ => {}
         }
     }

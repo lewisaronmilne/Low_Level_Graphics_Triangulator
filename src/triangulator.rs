@@ -1,15 +1,4 @@
-#[derive(Debug, Copy, Clone)]
-pub struct XY 
-{ 
-    pub x: f32, 
-    pub y: f32 
-}
-
-impl XY 
-{
-    pub fn new(x: f32, y: f32) -> XY { XY {x, y} }
-    pub fn init() -> XY { XY::new(0.0, 0.0) }
-}
+use crate::{XY};
 
 #[derive(Debug, Clone)]
 struct RankyPoint<'a>
