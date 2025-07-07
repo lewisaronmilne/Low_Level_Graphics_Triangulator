@@ -1,15 +1,5 @@
 use crate::{XY};
 
-pub fn calc(points: &[XY]) -> Vec<(XY, XY, XY)>
-{
-    let rankygon = Rankygon::new(points);
-    let monos = RankygonToMonos::convert(rankygon);
-    let mut triangles = Vec::<(XY, XY, XY)>::new();
-    for mono in monos
-        { triangles.append(&mut MonotoneToTriangles::convert(mono)); }
-    return triangles;
-}
-
 #[derive(Debug, Clone)]
 struct RankyPoint<'a>
 {
@@ -424,4 +414,14 @@ impl MonotoneToTriangles
         MonotoneToTriangles::skipped_section(points, triangles, front_index, least_ear_index);
         MonotoneToTriangles::skipped_section(points, triangles, least_ear_index, back_index);
     }
+}
+
+pub fn calc(points: &[XY]) -> Vec<(XY, XY, XY)>
+{
+    let rankygon = Rankygon::new(points);
+    let monos = RankygonToMonos::convert(rankygon);
+    let mut triangles = Vec::<(XY, XY, XY)>::new();
+    for mono in monos
+        { triangles.append(&mut MonotoneToTriangles::convert(mono)); }
+    return triangles;
 }

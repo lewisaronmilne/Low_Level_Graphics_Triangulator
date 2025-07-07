@@ -1,5 +1,4 @@
-target
-**/*.rs.bk
-.directory
+/target
+.directory 
+.vscode
 Cargo.lock
-shaders/*.spirv

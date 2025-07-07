@@ -1,8 +1,10 @@
-use crate::{XY};
+use crate::triangulator;
+use crate::XY;
+use crate::Vertex;
 
-pub fn make_paths() -> Vec<Vec<XY>>
+pub fn make_shapes() -> Vec<Vec<Vertex>>
 {
-    vec!(
+    let paths = vec!(
         vec!(XY::new(-1.0,-1.0), XY::new( 1.0,-1.0), XY::new( 1.0, 1.0), XY::new(-1.0, 1.0)),
 
         vec!(XY::new(-0.6,-0.2), XY::new(-0.4,-0.2), XY::new(-0.2,-0.2), XY::new( 0.0,-0.2), XY::new( 0.2,-0.2),
@@ -17,50 +19,46 @@ pub fn make_paths() -> Vec<Vec<XY>>
             
         vec!(XY::new(-0.65, 0.6), XY::new(-0.1, 0.6), 
             XY::new(-0.05,-0.8), XY::new( 0.05,-0.8), 
-            XY::new( 0.1, 0.6),  XY::new( 0.65, 0.6), 
-            XY::new( 0.7, 0.8),  XY::new(-0.7, 0.8)),
+            XY::new( 0.1, 0.6), XY::new( 0.65, 0.6), 
+            XY::new( 0.7, 0.8), XY::new(-0.7, 0.8)),
 
         vec!(XY::new(-0.65, 0.6), XY::new(-0.1, 0.6), 
             XY::new(-0.05,-0.8), XY::new( 0.0, 0.0), XY::new( 0.05,-0.8), 
-            XY::new( 0.1, 0.6),  XY::new( 0.65, 0.6), 
-            XY::new( 0.7, 0.8),  XY::new(-0.7, 0.8)),
+            XY::new( 0.1, 0.6), XY::new( 0.65, 0.6), 
+            XY::new( 0.7, 0.8), XY::new(-0.7, 0.8)),
 
-        vec!(XY::new(-0.5, 0.0),  XY::new(-0.2,-0.1),  XY::new(-0.1,-0.8), XY::new( 0.1,-0.2), XY::new( 0.0, 0.0)),
+        vec!(XY::new(-0.5, 0.0), XY::new(-0.2,-0.1), XY::new(-0.1,-0.8), XY::new( 0.1,-0.2), XY::new( 0.0, 0.0)),
 
         vec!(XY::new(-0.65, 0.6), XY::new(-0.1, 0.6), XY::new( 0.0,-0.6),
-            XY::new(-0.4,-0.6),  XY::new(-0.3,-0.8), XY::new( 0.1,-0.8),
-            XY::new( 0.2,-0.6),  XY::new( 0.3, 0.6), XY::new( 0.65, 0.6), 
-            XY::new( 0.7, 0.8),  XY::new(-0.7, 0.8)),
+            XY::new(-0.4,-0.6), XY::new(-0.3,-0.8), XY::new( 0.1,-0.8),
+            XY::new( 0.2,-0.6), XY::new( 0.3, 0.6), XY::new( 0.65, 0.6), 
+            XY::new( 0.7, 0.8), XY::new(-0.7, 0.8)),
 
-        vec!(XY::new(-0.5, 0.5),  XY::new(-0.4, 0.6),  XY::new( 0.5, 0.0),  XY::new(-0.4,-0.6),
-            XY::new(-0.5,-0.5),  XY::new( 0.0, 0.0)),
+        vec!(XY::new(-0.5, 0.5), XY::new(-0.4, 0.6), XY::new( 0.5, 0.0), XY::new(-0.4,-0.6),
+            XY::new(-0.5,-0.5), XY::new( 0.0, 0.0)),
 
-        vec!(XY::new( 0.5, 0.5),  XY::new( 0.4, 0.6),  XY::new(-0.5, 0.0),  XY::new( 0.4,-0.6),
-            XY::new( 0.5,-0.5),  XY::new(-0.0, 0.0)),
+        vec!(XY::new( 0.5, 0.5), XY::new( 0.4, 0.6), XY::new(-0.5, 0.0), XY::new( 0.4,-0.6),
+            XY::new( 0.5,-0.5), XY::new(-0.0, 0.0)),
 
-        vec!(XY::new(-0.5,-0.4),  XY::new(-0.4,-0.5),  XY::new(-0.2,-0.3),  XY::new( 0.2,-0.3),  XY::new( 0.4,-0.5), 
-            XY::new( 0.5,-0.4),  XY::new( 0.1, 0.0),  XY::new( 0.5, 0.4),  XY::new( 0.4, 0.5),  XY::new( 0.2, 0.3),
-            XY::new(-0.2, 0.3),  XY::new(-0.4, 0.5),  XY::new(-0.5, 0.4),  XY::new(-0.1, 0.0),  
-        ), 
+        vec!(XY::new(-0.5,-0.4), XY::new(-0.4,-0.5), XY::new(-0.2,-0.3), XY::new( 0.2,-0.3), XY::new( 0.4,-0.5), 
+            XY::new( 0.5,-0.4), XY::new( 0.1, 0.0), XY::new( 0.5, 0.4), XY::new( 0.4, 0.5), XY::new( 0.2, 0.3),
+            XY::new(-0.2, 0.3), XY::new(-0.4, 0.5), XY::new(-0.5, 0.4), XY::new(-0.1, 0.0)), 
 
-        vec!(XY::new(-0.5,-0.2),  XY::new(-0.5,-0.1), XY::new(-0.5, 0.0), XY::new(-0.5, 0.1), XY::new(-0.5, 0.2), 
-            XY::new( 0.5, 0.2),  XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.5,-0.2), 
-        ),
+        vec!(XY::new(-0.5,-0.2), XY::new(-0.5,-0.1), XY::new(-0.5, 0.0), XY::new(-0.5, 0.1), XY::new(-0.5, 0.2), 
+            XY::new( 0.5, 0.2), XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.5,-0.2)),
 
-        vec!(XY::new(-0.5, 0.0),  XY::new(-0.5, 0.1), XY::new(-0.5, 0.2), 
-            XY::new( 0.5, 0.2),  XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.5,-0.2), 
-            XY::new(-0.5,-0.2),  XY::new(-0.5,-0.1), 
-        ),
+        vec!(XY::new(-0.5, 0.0), XY::new(-0.5, 0.1), XY::new(-0.5, 0.2), 
+            XY::new( 0.5, 0.2), XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.5,-0.2), 
+            XY::new(-0.5,-0.2), XY::new(-0.5,-0.1)),
 
-        vec!(XY::new(-0.5,-0.2),  XY::new(-0.5,-0.1), XY::new(-0.5, 0.0), XY::new(-0.5, 0.1), XY::new(-0.3, 0.2), 
-            XY::new( 0.5, 0.2),  XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.3,-0.2), 
-        ), 
+        vec!(XY::new(-0.5,-0.2), XY::new(-0.5,-0.1), XY::new(-0.5, 0.0), XY::new(-0.5, 0.1), XY::new(-0.3, 0.2), 
+            XY::new( 0.5, 0.2), XY::new( 0.5, 0.1), XY::new( 0.5, 0.0), XY::new( 0.5,-0.1), XY::new( 0.3,-0.2)), 
 
-        vec!(XY::new(-0.7,-0.5),  XY::new(-0.8,-0.6),
-            XY::new(-0.4,-0.6),  XY::new(-0.5,-0.5),  XY::new(-0.5, 0.6),  XY::new(-0.1, 0.6), 
-            XY::new(-0.1,-0.2),  XY::new(-0.2,-0.3),  XY::new( 0.2,-0.3),  XY::new( 0.1, -0.2), 
-            XY::new( 0.1, 0.6),  XY::new( 0.5, 0.6),  XY::new( 0.5,-0.5), XY::new( 0.4,-0.6),  XY::new(0.8, -0.6),
-            XY::new( 0.7,-0.5),  XY::new( 0.7, 0.8),  XY::new(-0.7, 0.8)),
+        vec!(XY::new(-0.7,-0.5), XY::new(-0.8,-0.6),
+            XY::new(-0.4,-0.6), XY::new(-0.5,-0.5), XY::new(-0.5, 0.6), XY::new(-0.1, 0.6), 
+            XY::new(-0.1,-0.2), XY::new(-0.2,-0.3), XY::new( 0.2,-0.3), XY::new( 0.1, -0.2), 
+            XY::new( 0.1, 0.6), XY::new( 0.5, 0.6), XY::new( 0.5,-0.5), XY::new( 0.4,-0.6), XY::new(0.8, -0.6),
+            XY::new( 0.7,-0.5), XY::new( 0.7, 0.8), XY::new(-0.7, 0.8)),
 
         vec!(XY::new((151.49479508399963-320.0)/320.0, (37.25356125831604-320.0)/320.0),
             XY::new((143.24405981522432-320.0)/320.0, (42.898801179057045-320.0)/320.0),
@@ -761,5 +759,22 @@ pub fn make_paths() -> Vec<Vec<XY>>
             XY::new((112.22741096530459-320.0)/320.0, (303.5639317035675-320.0)/320.0),
             XY::new((119.59888242172192-320.0)/320.0, (310.29662617683414-320.0)/320.0),
             XY::new((128.63035600765608-320.0)/320.0, (314.46245197296145-320.0)/320.0))
-    )
+    );
+
+    let mut shapes = vec!();
+
+    for path in paths 
+    {
+        let path_xys = triangulator::calc(&path);
+        let mut path_verts = Vec::with_capacity(path_xys.len()*3);
+        for xy in path_xys
+        {
+            path_verts.push(Vertex { position: [xy.0.x, xy.0.y, 0.0], color: [0.5, 0.0, 0.5] });
+            path_verts.push(Vertex { position: [xy.1.x, xy.1.y, 0.0], color: [0.5, 0.0, 0.5] });
+            path_verts.push(Vertex { position: [xy.2.x, xy.2.y, 0.0], color: [0.5, 0.0, 0.5] });
+        }
+        shapes.push(path_verts);
+    };
+
+    shapes
 }

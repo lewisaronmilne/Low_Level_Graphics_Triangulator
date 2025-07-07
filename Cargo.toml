@@ -1,13 +1,12 @@
 [package]
-name = "low_level_triangulator"
+name = "graphics_test"
 version = "0.1.0"
-authors = ["lewisaronmilne <lewisaronmilne@gmail.com>"]
-edition = "2018"
-build = "build.rs"
+edition = "2024"
 
 [dependencies]
-wgpu = "0.3"
-wgpu-native = { version = "0.3", features = ["gfx-backend-vulkan"]}
-winit = "0.20, <0.20.0-alpha4"
-raw-window-handle = "0.1"
-rand = "0.7"
+env_logger = "0.10"
+winit = "0.30"
+wgpu = "25.0"
+pollster = "0.4"
+log = "0.4"
+bytemuck = "1.23"
